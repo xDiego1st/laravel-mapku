@@ -1112,6 +1112,11 @@
             this.bringMarkerLayersToFront();
 
             if (this.isTruckTracking()) {
+                ['cluster_glow', 'cluster_circles', 'cluster_count', 'unclustered_points_halo', 'unclustered_points'].forEach(l => {
+                    if (this.map.getLayer(l)) {
+                        this.map.setLayoutProperty(l, 'visibility', 'none');
+                    }
+                });
                 this.renderDomTruckMarkers();
             }
             this.renderEntityList();
@@ -1585,6 +1590,11 @@
 
             // Update Status Telemetri di Bottom-Center
             this.updateTelemetry(filtered);
+
+            // Update DOM Truck Markers jika mode tracking armada
+            if (this.isTruckTracking()) {
+                this.renderDomTruckMarkers(filtered);
+            }
 
             // Update Cat Count di Drawer
             this.updateFilterCounts(filtered);
@@ -2274,14 +2284,14 @@
                 (this.config.markers && this.config.markers.some(m => m.marker_type === 'truck' || ['DALAM_PERJALANAN', 'SAMPAI_LOKASI', 'PROSES_PENGERJAAN', 'DITUGASKAN', 'SIAGA'].includes(m.category)));
         }
 
-        renderDomTruckMarkers() {
+        renderDomTruckMarkers(customList) {
             if (!this.map || !window.maplibregl) return;
             this.domTruckMarkers = this.domTruckMarkers || {};
 
-            const currentMarkers = this.config.markers || [];
+            const currentMarkers = customList || this.config.markers || [];
             const currentIds = new Set(currentMarkers.map(m => String(m.id)));
 
-            // Hapus marker yang sudah tidak aktif
+            // Hapus marker yang sudah tidak aktif atau terfilter
             Object.keys(this.domTruckMarkers).forEach(id => {
                 if (!currentIds.has(id)) {
                     this.domTruckMarkers[id].remove();
@@ -2310,6 +2320,10 @@
                 const wrap = document.createElement('div');
                 wrap.className = 'truck-marker-wrap';
                 wrap.id = `truck-marker-${id}`;
+                wrap.style.position = 'absolute';
+                wrap.style.top = '0';
+                wrap.style.left = '0';
+                wrap.style.willChange = 'transform';
 
                 const beacon = document.createElement('div');
                 beacon.className = `truck-marker-beacon ${colorClass}`;
@@ -2342,8 +2356,8 @@
                     anchor: 'center',
                     rotation: m.extra && m.extra.heading ? m.extra.heading : 0
                 })
-                .setLngLat([lng, lat])
-                .addTo(this.map);
+                    .setLngLat([lng, lat])
+                    .addTo(this.map);
 
                 this.domTruckMarkers[id] = marker;
             });

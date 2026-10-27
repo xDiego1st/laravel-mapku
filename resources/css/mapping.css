@@ -1291,7 +1291,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-width: 280px;
+    width: 250px;
+    max-width: calc(100vw - 28px);
+    box-sizing: border-box;
     pointer-events: none;
 }
 
@@ -1404,11 +1406,14 @@
 
 /* Collapsible Legend Panel */
 .mapping-legend-panel {
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     transition: all 0.25s ease;
 }
 
@@ -1417,6 +1422,8 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .legend-title-wrap {
@@ -1459,12 +1466,22 @@
     transform: rotate(-90deg);
 }
 
+.legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .legend-items-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    gap: 5px;
     padding-top: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .legend-item {
@@ -1476,6 +1493,7 @@
     background: rgba(30, 41, 59, 0.4);
     cursor: pointer;
     transition: background 0.15s ease;
+    min-width: 0;
 }
 
 .legend-item:hover {
@@ -1531,6 +1549,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     flex: 1;
+    min-width: 0;
 }
 
 .legend-badge-count {
@@ -1541,25 +1560,38 @@
     background: rgba(255, 255, 255, 0.12);
     padding: 0 4px;
     border-radius: 4px;
+    flex-shrink: 0;
 }
 
 .legend-hint {
     display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 9px;
-    color: #64748b;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 8.5px;
+    line-height: 1.35;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.55);
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    width: 100%;
+    word-break: break-word;
+    overflow: hidden;
 }
 
-.hint-icon {
+.legend-hint .hint-icon {
     width: 12px;
     height: 12px;
     color: var(--mapping-accent-light);
     flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.legend-hint-text {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -2562,26 +2594,70 @@
     max-height: 100%;
     flex-shrink: 0;
 }
-.mapping-wrapper .w-2\.5 { width: 10px !important; }
-.mapping-wrapper .h-2\.5 { height: 10px !important; }
-.mapping-wrapper .w-3 { width: 12px !important; }
-.mapping-wrapper .h-3 { height: 12px !important; }
-.mapping-wrapper .w-3\.5 { width: 14px !important; }
-.mapping-wrapper .h-3\.5 { height: 14px !important; }
-.mapping-wrapper .w-4 { width: 16px !important; }
-.mapping-wrapper .h-4 { height: 16px !important; }
-.mapping-wrapper .w-5 { width: 20px !important; }
-.mapping-wrapper .h-5 { height: 20px !important; }
-.mapping-wrapper .w-6 { width: 24px !important; }
-.mapping-wrapper .h-6 { height: 24px !important; }
-.mapping-wrapper .w-8 { width: 32px !important; }
-.mapping-wrapper .h-8 { height: 32px !important; }
+
+.mapping-wrapper .w-2\.5 {
+    width: 10px !important;
+}
+
+.mapping-wrapper .h-2\.5 {
+    height: 10px !important;
+}
+
+.mapping-wrapper .w-3 {
+    width: 12px !important;
+}
+
+.mapping-wrapper .h-3 {
+    height: 12px !important;
+}
+
+.mapping-wrapper .w-3\.5 {
+    width: 14px !important;
+}
+
+.mapping-wrapper .h-3\.5 {
+    height: 14px !important;
+}
+
+.mapping-wrapper .w-4 {
+    width: 16px !important;
+}
+
+.mapping-wrapper .h-4 {
+    height: 16px !important;
+}
+
+.mapping-wrapper .w-5 {
+    width: 20px !important;
+}
+
+.mapping-wrapper .h-5 {
+    height: 20px !important;
+}
+
+.mapping-wrapper .w-6 {
+    width: 24px !important;
+}
+
+.mapping-wrapper .h-6 {
+    height: 24px !important;
+}
+
+.mapping-wrapper .w-8 {
+    width: 32px !important;
+}
+
+.mapping-wrapper .h-8 {
+    height: 32px !important;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /* 10. LIVE TRACKING & VEHICLE/TRUCK DOM MARKERS                              */
 /* ─────────────────────────────────────────────────────────────────────────── */
 .truck-marker-wrap {
-    position: relative;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     cursor: pointer;
     width: 48px;
     height: 48px;
@@ -2589,12 +2665,17 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+    pointer-events: auto;
 }
 
 .truck-marker-wrap:hover {
-    transform: scale(1.15);
     z-index: 50 !important;
+}
+
+.truck-marker-wrap:hover .truck-marker-pin {
+    transform: scale(1.18);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 .truck-marker-beacon {
@@ -2608,16 +2689,42 @@
     z-index: 1;
 }
 
-.truck-marker-beacon.blue { background: rgba(37, 99, 235, 0.45); }
-.truck-marker-beacon.amber { background: rgba(217, 119, 6, 0.45); }
-.truck-marker-beacon.emerald { background: rgba(16, 185, 129, 0.45); }
-.truck-marker-beacon.purple { background: rgba(124, 58, 237, 0.45); }
-.truck-marker-beacon.slate { background: rgba(100, 116, 139, 0.35); animation: none; }
+.truck-marker-beacon.blue {
+    background: rgba(37, 99, 235, 0.45);
+}
+
+.truck-marker-beacon.amber {
+    background: rgba(217, 119, 6, 0.45);
+}
+
+.truck-marker-beacon.emerald {
+    background: rgba(16, 185, 129, 0.45);
+}
+
+.truck-marker-beacon.purple {
+    background: rgba(124, 58, 237, 0.45);
+}
+
+.truck-marker-beacon.slate {
+    background: rgba(100, 116, 139, 0.35);
+    animation: none;
+}
 
 @keyframes radar-beacon {
-    0% { transform: scale(0.8); opacity: 0.95; }
-    70% { transform: scale(2.4); opacity: 0; }
-    100% { transform: scale(2.6); opacity: 0; }
+    0% {
+        transform: scale(0.8);
+        opacity: 0.95;
+    }
+
+    70% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(2.6);
+        opacity: 0;
+    }
 }
 
 .truck-marker-pin {
@@ -2631,7 +2738,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease;
     background: #2563eb;
 }
 
@@ -2639,12 +2746,14 @@
     width: 20px;
     height: 20px;
     fill: #ffffff;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .truck-marker-label {
     position: absolute;
     bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(15, 23, 42, 0.92);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
