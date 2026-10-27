@@ -2548,6 +2548,27 @@
     background: var(--theme-accent-light);
 }
 
+/* Defensive dimensions for mapping icons to prevent layout explosion without Tailwind */
+.mapping-wrapper svg {
+    max-width: 100%;
+    max-height: 100%;
+    flex-shrink: 0;
+}
+.mapping-wrapper .w-2\.5 { width: 10px !important; }
+.mapping-wrapper .h-2\.5 { height: 10px !important; }
+.mapping-wrapper .w-3 { width: 12px !important; }
+.mapping-wrapper .h-3 { height: 12px !important; }
+.mapping-wrapper .w-3\.5 { width: 14px !important; }
+.mapping-wrapper .h-3\.5 { height: 14px !important; }
+.mapping-wrapper .w-4 { width: 16px !important; }
+.mapping-wrapper .h-4 { height: 16px !important; }
+.mapping-wrapper .w-5 { width: 20px !important; }
+.mapping-wrapper .h-5 { height: 20px !important; }
+.mapping-wrapper .w-6 { width: 24px !important; }
+.mapping-wrapper .h-6 { height: 24px !important; }
+.mapping-wrapper .w-8 { width: 32px !important; }
+.mapping-wrapper .h-8 { height: 32px !important; }
+
 /* ─────────────────────────────────────────────────────────────────────────── */
 /* 10. LIVE TRACKING & VEHICLE/TRUCK DOM MARKERS                              */
 /* ─────────────────────────────────────────────────────────────────────────── */

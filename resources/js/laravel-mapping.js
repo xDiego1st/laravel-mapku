@@ -245,6 +245,14 @@
 
             this.map.on('load', () => {
                 this.isReady = true;
+                try { this.map.resize(); } catch (e) { }
+                setTimeout(() => { try { this.map.resize(); } catch (e) { } }, 150);
+                setTimeout(() => { try { this.map.resize(); } catch (e) { } }, 500);
+
+                window.addEventListener('resize', () => {
+                    try { this.map.resize(); } catch (e) { }
+                });
+
                 this.setupBoundaryOverlay();
                 this.setupMarkersLayer();
                 this.setupMouseMoveInspector();
