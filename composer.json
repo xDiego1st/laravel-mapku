@@ -1,0 +1,55 @@
+{
+    "name": "xdiego1st/laravel-mapku",
+    "description": "Enterprise-grade Reusable GIS & Interactive Mapping Package for Laravel based on MapLibre GL JS, featuring Built-in Tile Proxy, Multi-Instance Isolation, and Dynamic Boundary Management.",
+    "keywords": [
+        "laravel",
+        "mapping",
+        "gis",
+        "maplibre",
+        "spatial",
+        "geojson",
+        "tile-proxy",
+        "basemaps",
+        "pekanbaru"
+    ],
+    "homepage": "https://github.com/xdiego1st/laravel-mapku",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rasyid Abdul Halim",
+            "email": "rasyid@diskominfotiksan.pekanbaru.go.id",
+            "role": "Lead Architect & Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2 || ^8.3 || ^8.4 || ^8.5",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/view": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/http": "^10.0 || ^11.0 || ^12.0 || ^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0 || ^9.0 || ^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laragiser\\Mapping\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laragiser\\Mapping\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laragiser\\Mapping\\MappingServiceProvider"
+            ],
+            "aliases": {
+                "Mapping": "Laragiser\\Mapping\\Facades\\Mapping"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
