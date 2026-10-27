@@ -115,6 +115,20 @@
                 </div>
             </div>
 
+            <!-- AREA 2.5: DAFTAR ENTITAS / ARMADA AKTIF (CLICK TO FOCUS) -->
+            <div class="filter-section">
+                <div class="flex items-center justify-between text-[11px] mb-2 font-bold text-slate-300 uppercase tracking-wider">
+                    <span class="flex items-center gap-1.5">
+                        <span>🚛</span>
+                        <span>Daftar Armada / Titik</span>
+                    </span>
+                    <span id="entity-list-badge-count-{{ $id }}" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">0</span>
+                </div>
+                <div id="entity-list-items-{{ $id }}" class="entity-list-container custom-scrollbar max-h-56 overflow-y-auto">
+                    <!-- Populated dynamically by MappingEngine.renderEntityList() -->
+                </div>
+            </div>
+
             <!-- AREA 3: KATEGORI LAYER / ENTITAS -->
             @if(!empty($categories))
                 <div class="filter-section">

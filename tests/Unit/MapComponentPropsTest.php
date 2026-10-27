@@ -13,7 +13,7 @@ class MapComponentPropsTest extends TestCase
             id: 'unit-test-map',
             markers: [
                 ['id' => 1, 'lat' => 0.507, 'lng' => 101.447, 'title' => 'CCTV 1', 'category' => 'CCTV'],
-                ['id' => 2, 'lat' => 0.510, 'lng' => 101.450, 'title' => 'PDAM Pipe', 'category' => 'PDAM'],
+                ['id' => 2, 'lat' => 0.51, 'lng' => 101.45, 'title' => 'PDAM Pipe', 'category' => 'PDAM'],
             ]
         );
 
@@ -53,7 +53,7 @@ class MapComponentPropsTest extends TestCase
     public function test_map_component_renders_blade_view_properly(): void
     {
         $view = $this->blade('<x-mapping-map id="test-blade-render" back-url="/admin/dashboard" back-label="Kembali ke Dashboard" />');
-        
+
         // Assert container elements exist
         $view->assertSee('mapping-canvas-test-blade-render', false);
         $view->assertSee('mapping-top-command-bar', false);

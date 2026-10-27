@@ -237,7 +237,7 @@
             if (typeof this.map.setGlyphs === 'function') {
                 try {
                     this.map.setGlyphs(defaultGlyphsUrl);
-                } catch (e) {}
+                } catch (e) { }
             }
 
             // Atribusi kompak di kanan bawah
@@ -279,6 +279,13 @@
                     this.focusEntity(entityId);
                 });
 
+                window.addEventListener('mapping:entity-location-updated', (e) => {
+                    if (!e.detail) return;
+                    const targetId = e.detail.mapId || e.detail.id;
+                    if (targetId && targetId !== this.id) return;
+                    this.updateEntityLocation(e.detail.entityId, e.detail.lat, e.detail.lng, e.detail.speed, e.detail.heading);
+                });
+
                 if (!window.SpatialMapInstance) {
                     window.SpatialMapInstance = this.map;
                 }
@@ -299,8 +306,8 @@
                 attribution: '&copy; Google Maps Imagery'
             };
 
-            const tileUrl = tileConfig.url.startsWith('http') || tileConfig.url.startsWith('/') 
-                ? tileConfig.url 
+            const tileUrl = tileConfig.url.startsWith('http') || tileConfig.url.startsWith('/')
+                ? tileConfig.url
                 : window.location.origin + '/' + tileConfig.url.replace(/^\//, '');
 
             const defaultGlyphsUrl = (window.location.origin || '') + '/vendor/laravel-mapping/fonts/{fontstack}/{range}.pbf';
@@ -382,8 +389,8 @@
             if (!this.map || !this.config.tileLayers[tileKey]) return;
 
             const tileConfig = this.config.tileLayers[tileKey];
-            const tileUrl = tileConfig.url.startsWith('http') || tileConfig.url.startsWith('/') 
-                ? tileConfig.url 
+            const tileUrl = tileConfig.url.startsWith('http') || tileConfig.url.startsWith('/')
+                ? tileConfig.url
                 : window.location.origin + '/' + tileConfig.url.replace(/^\//, '');
 
             this.activeTileKey = tileKey;
@@ -445,7 +452,7 @@
             }
             try {
                 localStorage.setItem(`mapping_districts_fill_${this.id}`, checked ? '1' : '0');
-            } catch (e) {}
+            } catch (e) { }
         }
 
         toggleDistrictsLayer(checked) {
@@ -462,7 +469,7 @@
             }
             try {
                 localStorage.setItem(`mapping_subdistricts_fill_${this.id}`, checked ? '1' : '0');
-            } catch (e) {}
+            } catch (e) { }
         }
 
         toggleSubdistrictsLayer(checked) {
@@ -497,7 +504,7 @@
                 this.map.setPaintProperty('boundary_fill', 'fill-opacity', val);
             }
             const labelEl = document.getElementById(`spatial-boundary-fill-opacity-val-${this.id}`) ||
-                            document.getElementById(`spatial-boundary-opacity-val-${this.id}`);
+                document.getElementById(`spatial-boundary-opacity-val-${this.id}`);
             if (labelEl) {
                 labelEl.textContent = Math.round(val * 100) + '%';
             }
@@ -507,7 +514,7 @@
             }
             try {
                 localStorage.setItem(`mapping_boundary_fill_opacity_${this.id}`, String(val));
-            } catch (e) {}
+            } catch (e) { }
         }
 
         toggleBoundary(checked) {
@@ -586,7 +593,7 @@
                             return parsed.data;
                         }
                     }
-                } catch (e) {}
+                } catch (e) { }
 
                 try {
                     const res = await fetch(url);
@@ -594,7 +601,7 @@
                         const data = await res.json();
                         try {
                             localStorage.setItem(cacheKey, JSON.stringify({ data, ts: Date.now() }));
-                        } catch (e) {}
+                        } catch (e) { }
                         return data;
                     }
                 } catch (err) {
@@ -802,7 +809,7 @@
                 if (this.map.getLayer(id)) {
                     try {
                         this.map.moveLayer(id);
-                    } catch (e) {}
+                    } catch (e) { }
                 }
             });
         }
@@ -915,7 +922,7 @@
                 if (typeof this.map.setGlyphs === 'function' && !this.map.getGlyphs()) {
                     try {
                         this.map.setGlyphs(defaultGlyphsUrl);
-                    } catch (e) {}
+                    } catch (e) { }
                 }
                 if (this.map.style && !this.map.style.glyphs) {
                     this.map.style.glyphs = defaultGlyphsUrl;
@@ -1095,6 +1102,11 @@
 
             // Pastikan layer marker berada di paling atas
             this.bringMarkerLayersToFront();
+
+            if (this.isTruckTracking()) {
+                this.renderDomTruckMarkers();
+            }
+            this.renderEntityList();
         }
 
         // ─── 3. SPATIAL INSPECTOR (MOUSEMOVE TELEMETRY & PIP) ─────────────────
@@ -1646,8 +1658,8 @@
         loadThemeConfig() {
             try {
                 const saved = localStorage.getItem(`mapping_theme_config_${this.id}`) ||
-                              localStorage.getItem('spatial_theme_config') ||
-                              localStorage.getItem('cctv_theme_config');
+                    localStorage.getItem('spatial_theme_config') ||
+                    localStorage.getItem('cctv_theme_config');
                 if (saved) {
                     this.currentTheme = Object.assign(this.currentTheme, JSON.parse(saved));
                     if (this.currentTheme.preset && themePresets[this.currentTheme.preset]) {
@@ -1662,7 +1674,7 @@
                         this.currentTheme.glassBorderColor = derived.border;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
             this.applyThemeToDOM();
         }
 
@@ -1672,7 +1684,7 @@
                 localStorage.setItem(`mapping_theme_config_${this.id}`, json);
                 localStorage.setItem('spatial_theme_config', json);
                 localStorage.setItem('cctv_theme_config', json);
-            } catch (e) {}
+            } catch (e) { }
         }
 
         applyThemeToDOM() {
@@ -1838,7 +1850,7 @@
 
         openThemeModal() {
             const modal = document.getElementById(`spatial-theme-modal-${this.id}`) ||
-                          document.getElementById(`mapping-theme-modal-${this.id}`);
+                document.getElementById(`mapping-theme-modal-${this.id}`);
             if (modal) {
                 modal.style.display = 'flex';
                 this.applyThemeToDOM();
@@ -1847,7 +1859,7 @@
 
         closeThemeModal() {
             const modal = document.getElementById(`spatial-theme-modal-${this.id}`) ||
-                          document.getElementById(`mapping-theme-modal-${this.id}`);
+                document.getElementById(`mapping-theme-modal-${this.id}`);
             if (modal) modal.style.display = 'none';
         }
 
@@ -1886,7 +1898,7 @@
                     const clamped = Math.min(Math.max(savedWidth, 340), maxW);
                     drawer.style.width = clamped + 'px';
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             let isResizing = false;
             let startX = 0;
@@ -1932,10 +1944,10 @@
                     try {
                         const finalWidth = drawer.offsetWidth;
                         localStorage.setItem('spatial_detail_drawer_width', finalWidth);
-                    } catch (err) {}
+                    } catch (err) { }
 
                     if (this.map) {
-                        try { this.map.resize(); } catch (err) {}
+                        try { this.map.resize(); } catch (err) { }
                     }
                 };
 
@@ -1953,7 +1965,7 @@
                     try {
                         const saved = parseInt(localStorage.getItem('spatial_detail_drawer_width') || '440', 10);
                         if (saved && !drawer.style.width) drawer.style.width = saved + 'px';
-                    } catch (e) {}
+                    } catch (e) { }
                 }
             });
         }
@@ -2041,7 +2053,7 @@
             const extraContainer = document.getElementById(`drawer-extra-props-${this.id}`);
             if (extraContainer) {
                 let rowsHtml = '';
-                
+
                 // 1. Structured attributes from SpatialEntityDTO
                 if (props.attributes) {
                     let attrs = props.attributes;
@@ -2186,10 +2198,10 @@
 
         updateTelemetry(items) {
             const totalCount = typeof items === 'number' ? items : (Array.isArray(items) ? items.length : 0);
-            
+
             const totalCountEl = document.getElementById(`telemetry-total-count-${this.id}`);
             if (totalCountEl) totalCountEl.textContent = totalCount;
-            
+
             const totalMobileEl = document.getElementById(`telemetry-total-count-mobile-${this.id}`);
             if (totalMobileEl) totalMobileEl.textContent = totalCount;
 
@@ -2243,6 +2255,170 @@
             this.applyComplexFilter();
             this.updateTelemetry(this.config.markers);
             this.updateFilterCounts();
+            if (this.isTruckTracking()) {
+                this.renderDomTruckMarkers();
+            }
+            this.renderEntityList();
+        }
+
+        isTruckTracking() {
+            return this.config.markerType === 'truck' ||
+                (this.config.markers && this.config.markers.some(m => m.marker_type === 'truck' || ['DALAM_PERJALANAN', 'SAMPAI_LOKASI', 'PROSES_PENGERJAAN', 'DITUGASKAN', 'SIAGA'].includes(m.category)));
+        }
+
+        renderDomTruckMarkers() {
+            if (!this.map || !window.maplibregl) return;
+            this.domTruckMarkers = this.domTruckMarkers || {};
+
+            const currentMarkers = this.config.markers || [];
+            const currentIds = new Set(currentMarkers.map(m => String(m.id)));
+
+            // Hapus marker yang sudah tidak aktif
+            Object.keys(this.domTruckMarkers).forEach(id => {
+                if (!currentIds.has(id)) {
+                    this.domTruckMarkers[id].remove();
+                    delete this.domTruckMarkers[id];
+                }
+            });
+
+            currentMarkers.forEach(m => {
+                const lng = parseFloat(m.lng);
+                const lat = parseFloat(m.lat);
+                if (isNaN(lng) || isNaN(lat)) return;
+
+                const id = String(m.id);
+                const colorClass = m.status_color || 'blue';
+                const markerColor = (m.extra && m.extra.color) || '#2563eb';
+                const armadaCode = (m.extra && m.extra.armada_code) || (m.title.split(' ')[1] ? m.title.split(' ')[1] : m.title);
+
+                if (this.domTruckMarkers[id]) {
+                    this.domTruckMarkers[id].setLngLat([lng, lat]);
+                    if (m.extra && m.extra.heading !== undefined && typeof this.domTruckMarkers[id].setRotation === 'function') {
+                        this.domTruckMarkers[id].setRotation(m.extra.heading);
+                    }
+                    return;
+                }
+
+                const wrap = document.createElement('div');
+                wrap.className = 'truck-marker-wrap';
+                wrap.id = `truck-marker-${id}`;
+
+                const beacon = document.createElement('div');
+                beacon.className = `truck-marker-beacon ${colorClass}`;
+                if (m.extra && m.extra.color) beacon.style.backgroundColor = m.extra.color;
+                wrap.appendChild(beacon);
+
+                const pin = document.createElement('div');
+                pin.className = 'truck-marker-pin';
+                if (m.extra && m.extra.color) pin.style.backgroundColor = m.extra.color;
+                pin.innerHTML = `
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-2 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                `;
+                wrap.appendChild(pin);
+
+                const label = document.createElement('div');
+                label.className = 'truck-marker-label';
+                label.id = `truck-label-${id}`;
+                label.innerText = armadaCode;
+                wrap.appendChild(label);
+
+                wrap.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.focusEntity(m.id);
+                });
+
+                const marker = new window.maplibregl.Marker({
+                    element: wrap,
+                    anchor: 'center',
+                    rotation: m.extra && m.extra.heading ? m.extra.heading : 0
+                })
+                .setLngLat([lng, lat])
+                .addTo(this.map);
+
+                this.domTruckMarkers[id] = marker;
+            });
+        }
+
+        updateEntityLocation(entityId, lat, lng, speed, heading) {
+            const id = String(entityId);
+            lat = parseFloat(lat);
+            lng = parseFloat(lng);
+            if (isNaN(lat) || isNaN(lng)) return;
+
+            if (this.domTruckMarkers && this.domTruckMarkers[id]) {
+                this.domTruckMarkers[id].setLngLat([lng, lat]);
+                if (heading !== undefined && typeof this.domTruckMarkers[id].setRotation === 'function') {
+                    this.domTruckMarkers[id].setRotation(heading);
+                }
+            }
+
+            if (this.config.markers) {
+                const item = this.config.markers.find(m => String(m.id) === id);
+                if (item) {
+                    item.lat = lat;
+                    item.lng = lng;
+                    if (item.attributes) {
+                        if (speed !== undefined) item.attributes['Kecepatan GPS'] = Math.round(speed) + ' km/jam';
+                        item.attributes['Pembaruan Terakhir'] = 'Baru saja';
+                    }
+                }
+                this.updateMarkersData(this.config.markers);
+            }
+
+            const labelEl = document.getElementById(`truck-label-${id}`);
+            if (labelEl && speed !== undefined) {
+                const base = labelEl.innerText.split(' • ')[0];
+                labelEl.innerText = speed > 0 ? `${base} • ${Math.round(speed)} km/h` : base;
+            }
+        }
+
+        renderEntityList() {
+            const container = document.getElementById(`entity-list-items-${this.id}`);
+            const badgeCount = document.getElementById(`entity-list-badge-count-${this.id}`);
+            if (!container) return;
+
+            const markers = this.config.markers || [];
+            if (badgeCount) badgeCount.textContent = markers.length;
+
+            if (markers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5 text-slate-500 text-xs font-medium">
+                        Tidak ada titik / armada aktif
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            markers.forEach(m => {
+                const color = (m.extra && m.extra.color) || '#2563eb';
+                const statusLabel = m.status_label || m.status || m.category || 'AKTIF';
+                const subtitle = m.subtitle || (m.attributes ? m.attributes['Operator / Supir'] : '') || '';
+                const plate = m.attributes ? m.attributes['No. Plat Polisi'] : '';
+                const speed = m.attributes ? m.attributes['Kecepatan GPS'] : '';
+
+                html += `
+                    <div class="entity-list-item-card" onclick="window.LaravelMapping.get('${this.id}')?.focusEntity('${m.id}')">
+                        <div class="entity-card-left">
+                            <div class="entity-card-icon" style="background: ${color}20; color: ${color}; border-color: ${color}45;">
+                                🚛
+                            </div>
+                            <div class="entity-card-info">
+                                <span class="entity-card-title">${m.title}</span>
+                                <span class="entity-card-subtitle">${subtitle}</span>
+                                ${speed || plate ? `<span class="entity-card-meta">${speed || ''}${speed && plate ? ' • ' : ''}${plate || ''}</span>` : ''}
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background: ${color}25; color: ${color}; border: 1px solid ${color}50;">
+                            ${statusLabel}
+                        </span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         updateMarkersData(newMarkers) {

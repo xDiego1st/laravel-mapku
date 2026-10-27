@@ -2,8 +2,8 @@
 
 namespace Laragiser\Mapping\View\Components;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 use Laragiser\Mapping\Support\SpatialEntityDTO;
@@ -25,35 +25,28 @@ class Map extends Component
     public bool $enableFullscreen;
     public bool $enableThemeSwitcher;
     public string $theme;
-
     // 5 Default Standard UI Controls Props
     public string $brandTitle;
     public string $brandBadge;
     public ?string $brandLogo;
     public bool $enableBrand;
-
     public bool $enableSearch;
     public string $searchPlaceholder;
     public bool $enableFilter;
     public array $categories;
-
     public bool $enableLegend;
     public array $legendItems;
-
     public bool $enableSpatialInspector;
-
     public bool $enableGisControls;
     public bool $enableResetRotation;
     public bool $enableResetView;
     public bool $enableGps;
-
     // Detail Drawer & Telemetry Props (100% Identik CCTV/PDAM/Kependudukan)
     public bool $enableDetailDrawer;
     public bool $enableTelemetry;
     public string $telemetryTotalLabel;
     public string $telemetryTotalTooltip;
     public array $telemetryMetrics;
-
     // Batas Administrasi Props (100% Identik CCTV/PDAM/Kependudukan)
     public ?string $boundaryKotaUrl;
     public ?string $boundaryKecamatanUrl;
@@ -62,16 +55,14 @@ class Map extends Component
     public bool $enableDistricts;
     public bool $enableSubdistricts;
     public bool $enableBoundaryLabels;
-
     // Advanced Filter & Customization Props (Sistem UI Kompleks Kependudukan)
     public array $searchCategories;
     public array $filterFields;
     public ?string $customFilterView;
     public array $districts;
-
     public ?string $backUrl;
     public ?string $backLabel;
-
+    public string $markerType;
     public string $aboutTitle;
     public string $aboutSubtitle;
     public string $aboutVersion;
@@ -126,6 +117,7 @@ class Map extends Component
         array $districts = [],
         ?string $backUrl = null,
         ?string $backLabel = 'Kembali',
+        string $markerType = 'auto',
         string $aboutTitle = 'Smart Spatial GIS',
         string $aboutSubtitle = 'Laravel Mapping Package',
         string $aboutVersion = 'v1.0.0',
@@ -209,6 +201,7 @@ class Map extends Component
 
         $this->backUrl = $backUrl;
         $this->backLabel = $backLabel;
+        $this->markerType = $markerType;
 
         $this->markers = collect($markers)->map(function ($item) {
             if ($item instanceof SpatialEntityDTO) {

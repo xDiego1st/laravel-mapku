@@ -25,10 +25,11 @@
         'enableTelemetry' => $enableTelemetry,
         'backUrl' => $backUrl ?? null,
         'backLabel' => $backLabel ?? 'Kembali',
+        'markerType' => $markerType ?? 'auto',
     ];
 @endphp
 
-<div class="mapping-wrapper theme-{{ $theme }}" id="mapping-wrapper-{{ $id }}" style="width: {{ $width }}; height: {{ $height }};">
+<div class="mapping-wrapper theme-{{ $theme }}" id="mapping-wrapper-{{ $id }}" style="width: {{ $width }}; height: {{ $height }};" wire:ignore>
     <!-- 1. WebGL Canvas Container -->
     <div id="mapping-canvas-{{ $id }}" class="mapping-canvas"
         data-mapping-instance="{{ $id }}"
