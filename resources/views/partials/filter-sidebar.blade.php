@@ -10,7 +10,7 @@
              title="Klik & geser untuk mengubah lebar sidebar filter">
             <div class="resizer-line"></div>
             <div class="resizer-grip">
-                <svg class="w-2.5 h-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-2.5 h-2.5 text-slate-400" width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7l-5 5 5 5M16 7l5 5-5 5" />
                 </svg>
             </div>
@@ -43,7 +43,7 @@
                         onclick="window.LaravelMapping.get('{{ $id }}')?.toggleFilterSidebar()"
                         class="flex items-center gap-1 px-2 py-1 text-slate-300 hover:text-white rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 transition active:scale-95 text-xs font-semibold cursor-pointer"
                         title="Tutup Filter">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="text-[11px]">Tutup</span>
@@ -62,7 +62,7 @@
                     onclick="window.LaravelMapping.get('{{ $id }}')?.resetComplexFilters()"
                     class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/30 hover:border-rose-500/60 rounded-md transition active:scale-95 cursor-pointer shadow-sm"
                     title="Reset Seluruh Filter ke Default">
-                    <svg class="w-3 h-3 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3 text-rose-400" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                     <span>Reset Filter</span>
@@ -76,7 +76,7 @@
             <div class="filter-section">
                 <div class="flex items-center justify-between text-[10px] mb-1.5">
                     <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 text-sky-400" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                         Cari Berdasarkan:
@@ -299,7 +299,7 @@
                 <button type="button"
                     onclick="window.LaravelMapping.get('{{ $id }}')?.applyComplexFilter(); window.LaravelMapping.get('{{ $id }}')?.toggleFilterSidebar();"
                     class="filter-footer-btn primary cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3.5 h-3.5" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                     Terapkan

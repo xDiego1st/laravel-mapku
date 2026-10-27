@@ -1247,6 +1247,14 @@
     transition: all 0.2s ease;
 }
 
+.filter-footer-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    max-width: 14px !important;
+    max-height: 14px !important;
+    flex-shrink: 0 !important;
+}
+
 .filter-footer-btn.primary {
     background: var(--theme-accent);
     border: 1px solid var(--theme-accent-light);
