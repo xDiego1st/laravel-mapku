@@ -1,6 +1,20 @@
 <div class="mapping-top-command-bar" id="mapping-top-command-bar-{{ $id }}">
     <!-- SISI KIRI: Brand, Tombol Pencarian & Filter Saja, dan Category Pills -->
     <div class="mapping-command-left">
+        @if(!empty($backUrl))
+            <!-- Tombol Kembali ke Admin / Dashboard -->
+            <a href="{{ $backUrl }}"
+                id="mapping-back-btn-{{ $id }}"
+                class="mapping-top-btn mapping-glass-panel cursor-pointer text-slate-200 hover:text-white flex items-center gap-1.5 transition active:scale-95 text-decoration-none"
+                style="text-decoration: none;"
+                title="{{ $backLabel ?? 'Kembali' }}">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span class="hidden sm:inline text-[11px] font-semibold">{{ $backLabel ?? 'Kembali' }}</span>
+            </a>
+        @endif
+
         @if($enableBrand)
             <!-- Brand Badge & About Modal Trigger -->
             <button type="button"

@@ -69,6 +69,9 @@ class Map extends Component
     public ?string $customFilterView;
     public array $districts;
 
+    public ?string $backUrl;
+    public ?string $backLabel;
+
     public string $aboutTitle;
     public string $aboutSubtitle;
     public string $aboutVersion;
@@ -121,6 +124,8 @@ class Map extends Component
         array $filterFields = [],
         ?string $customFilterView = null,
         array $districts = [],
+        ?string $backUrl = null,
+        ?string $backLabel = 'Kembali',
         string $aboutTitle = 'Smart Spatial GIS',
         string $aboutSubtitle = 'Laravel Mapping Package',
         string $aboutVersion = 'v1.0.0',
@@ -201,6 +206,9 @@ class Map extends Component
         $this->aboutSubtitle = $aboutSubtitle;
         $this->aboutVersion = $aboutVersion;
         $this->aboutDescription = $aboutDescription;
+
+        $this->backUrl = $backUrl;
+        $this->backLabel = $backLabel;
 
         $this->markers = collect($markers)->map(function ($item) {
             if ($item instanceof SpatialEntityDTO) {

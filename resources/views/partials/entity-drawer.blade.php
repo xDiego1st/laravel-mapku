@@ -90,5 +90,8 @@
 
         <!-- Extra Attributes Container (Dinamis dari properti marker) -->
         <div id="drawer-extra-props-{{ $id }}" class="drawer-extra-props"></div>
+
+        <!-- Custom Action Buttons Container (Call, Details, etc.) -->
+        <div id="drawer-custom-actions-{{ $id }}" class="drawer-custom-actions" style="display: none;"></div>
     </div>
 </div>

@@ -23,6 +23,8 @@
         'enableSpatialInspector' => $enableSpatialInspector,
         'enableDetailDrawer' => $enableDetailDrawer,
         'enableTelemetry' => $enableTelemetry,
+        'backUrl' => $backUrl ?? null,
+        'backLabel' => $backLabel ?? 'Kembali',
     ];
 @endphp
 

@@ -1974,6 +1974,73 @@
     border: 1px solid rgba(244, 63, 94, 0.4);
 }
 
+.drawer-status-badge.badge-blue,
+.drawer-status-badge.badge-primary {
+    background: rgba(37, 99, 235, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+.drawer-status-badge.badge-purple,
+.drawer-status-badge.badge-violet {
+    background: rgba(124, 58, 237, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(124, 58, 237, 0.4);
+}
+
+.drawer-status-badge.badge-slate {
+    background: rgba(100, 116, 139, 0.2);
+    color: #cbd5e1;
+    border: 1px solid rgba(100, 116, 139, 0.4);
+}
+
+.drawer-custom-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 14px;
+}
+
+.drawer-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.drawer-action-btn.btn-action-primary {
+    background: linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-accent-hover) 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(var(--theme-accent-rgb), 0.3);
+}
+
+.drawer-action-btn.btn-action-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(var(--theme-accent-rgb), 0.4);
+    color: #ffffff;
+}
+
+.drawer-action-btn.btn-action-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.drawer-action-btn.btn-action-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
 .drawer-category-badge {
     padding: 2px 8px;
     font-size: 10px;

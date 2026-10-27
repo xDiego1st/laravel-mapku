@@ -254,6 +254,31 @@
                 // Daftarkan ke Global Registry
                 window.LaravelMapping.register(this.id, this);
 
+                // Listen to live markers update & entity focus
+                window.addEventListener('mapping:update-markers', (e) => {
+                    if (!e.detail) return;
+                    const targetId = e.detail.mapId || e.detail.id;
+                    const markers = e.detail.markers;
+                    if (targetId && targetId !== this.id) return;
+                    this.setMarkers(markers);
+                });
+
+                window.addEventListener('mapping:focus-entity', (e) => {
+                    if (!e.detail) return;
+                    const targetId = e.detail.mapId;
+                    const entityId = e.detail.entityId || e.detail.id;
+                    if (targetId && targetId !== this.id) return;
+                    this.focusEntity(entityId);
+                });
+
+                window.addEventListener('mapping:focus-marker', (e) => {
+                    if (!e.detail) return;
+                    const targetId = e.detail.mapId;
+                    const entityId = e.detail.entityId || e.detail.id;
+                    if (targetId && targetId !== this.id) return;
+                    this.focusEntity(entityId);
+                });
+
                 if (!window.SpatialMapInstance) {
                     window.SpatialMapInstance = this.map;
                 }
@@ -920,7 +945,41 @@
                 }
             }
 
-            // 4. Unclustered Point Markers (Glowing Marker Dots with Category Colors)
+            // 4. Unclustered Point Markers (Glowing Marker Dots with Category & Status Colors)
+            const markerColorExpression = [
+                'case',
+                ['has', 'color'], ['get', 'color'],
+                ['has', 'marker_color'], ['get', 'marker_color'],
+                ['has', 'status_color'], [
+                    'match', ['get', 'status_color'],
+                    'emerald', '#10b981',
+                    'green', '#10b981',
+                    'amber', '#f59e0b',
+                    'yellow', '#eab308',
+                    'blue', '#2563eb',
+                    'sky', '#0284c7',
+                    'purple', '#8b5cf6',
+                    'violet', '#7c3aed',
+                    'red', '#ef4444',
+                    'rose', '#f43f5e',
+                    'slate', '#64748b',
+                    'gray', '#64748b',
+                    ['get', 'status_color']
+                ],
+                ['match', ['get', 'category'],
+                    'DALAM_PERJALANAN', '#2563eb',
+                    'SAMPAI_LOKASI', '#d97706',
+                    'PROSES_PENGERJAAN', '#059669',
+                    'DITUGASKAN', '#7c3aed',
+                    'SIAGA', '#64748b',
+                    'PEMDA', '#38bdf8',
+                    'CCTV', '#10b981',
+                    'PDAM', '#0ea5e9',
+                    'KEPENDUDUKAN', '#a855f7',
+                    '#0284c7'
+                ]
+            ];
+
             if (!this.map.getLayer('unclustered_points_halo')) {
                 this.map.addLayer({
                     id: 'unclustered_points_halo',
@@ -928,7 +987,7 @@
                     source: 'markers_source',
                     filter: ['!', ['has', 'point_count']],
                     paint: {
-                        'circle-color': '#38bdf8',
+                        'circle-color': markerColorExpression,
                         'circle-radius': 14,
                         'circle-opacity': 0.25
                     }
@@ -942,15 +1001,7 @@
                     source: 'markers_source',
                     filter: ['!', ['has', 'point_count']],
                     paint: {
-                        'circle-color': [
-                            'match',
-                            ['get', 'category'],
-                            'PEMDA', '#38bdf8',
-                            'CCTV', '#10b981',
-                            'PDAM', '#0ea5e9',
-                            'KEPENDUDUKAN', '#a855f7',
-                            '#38bdf8'
-                        ],
+                        'circle-color': markerColorExpression,
                         'circle-radius': 9,
                         'circle-stroke-width': 2.5,
                         'circle-stroke-color': '#ffffff'
@@ -1918,17 +1969,30 @@
             // Badges Status
             const statusBadge = document.getElementById(`drawer-status-badge-${this.id}`);
             if (statusBadge) {
-                const status = (props.status || 'AKTIF').toUpperCase();
-                statusBadge.textContent = status;
-                statusBadge.className = 'drawer-status-badge ' + (
-                    status === 'AKTIF' || status === 'ONLINE' ? 'badge-active' :
-                    (status === 'SIAGA' || status === 'WARNING' ? 'badge-warning' : 'badge-danger')
-                );
+                const statusUpper = (props.status || 'AKTIF').toUpperCase();
+                statusBadge.textContent = props.status_label || statusUpper;
+                let badgeClass = 'badge-active';
+                if (props.status_color) {
+                    badgeClass = `badge-${props.status_color}`;
+                } else if (['DALAM_PERJALANAN', 'OTW', 'BLUE', 'PRIMARY'].includes(statusUpper)) {
+                    badgeClass = 'badge-blue';
+                } else if (['SAMPAI_LOKASI', 'TIBA', 'SIAGA', 'WARNING', 'AMBER', 'YELLOW'].includes(statusUpper)) {
+                    badgeClass = 'badge-warning';
+                } else if (['PROSES_PENGERJAAN', 'AKTIF', 'ONLINE', 'EMERALD', 'GREEN'].includes(statusUpper)) {
+                    badgeClass = 'badge-active';
+                } else if (['DITUGASKAN', 'PURPLE', 'VIOLET'].includes(statusUpper)) {
+                    badgeClass = 'badge-purple';
+                } else if (['OFFLINE', 'NONAKTIF', 'RUSAK', 'DANGER', 'RED', 'ROSE'].includes(statusUpper)) {
+                    badgeClass = 'badge-danger';
+                } else {
+                    badgeClass = 'badge-slate';
+                }
+                statusBadge.className = `drawer-status-badge ${badgeClass}`;
             }
 
             // Category Badge
             const catBadge = document.getElementById(`drawer-category-badge-${this.id}`);
-            if (catBadge) catBadge.textContent = props.category || 'UMUM';
+            if (catBadge) catBadge.textContent = props.category_label || props.category || 'UMUM';
 
             // Title & Subtitle
             const titleEl = document.getElementById(`drawer-entity-title-${this.id}`);
@@ -1968,27 +2032,81 @@
             }
 
             const catVal = document.getElementById(`drawer-category-val-${this.id}`);
-            if (catVal) catVal.textContent = props.category || '-';
+            if (catVal) catVal.textContent = props.category_label || props.category || '-';
 
             const statusVal = document.getElementById(`drawer-status-val-${this.id}`);
-            if (statusVal) statusVal.textContent = (props.status || 'AKTIF').toUpperCase();
+            if (statusVal) statusVal.textContent = (props.status_label || props.status || 'AKTIF').toUpperCase();
 
-            // Dynamic Extra Attributes
+            // Dynamic Extra Attributes (Supports Object/Array & Flat Properties)
             const extraContainer = document.getElementById(`drawer-extra-props-${this.id}`);
             if (extraContainer) {
-                const excluded = ['title', 'subtitle', 'category', 'status', 'lat', 'lng', 'thumbnail', 'thumbnail_url', 'image'];
-                const extraKeys = Object.keys(props).filter(k => !excluded.includes(k) && props[k] !== null && props[k] !== undefined && typeof props[k] !== 'object');
-                if (extraKeys.length > 0) {
+                let rowsHtml = '';
+                
+                // 1. Structured attributes from SpatialEntityDTO
+                if (props.attributes) {
+                    let attrs = props.attributes;
+                    if (typeof attrs === 'string') {
+                        try { attrs = JSON.parse(attrs); } catch (e) { attrs = {}; }
+                    }
+                    if (typeof attrs === 'object' && attrs !== null) {
+                        Object.entries(attrs).forEach(([k, v]) => {
+                            if (v !== null && v !== undefined && typeof v !== 'object') {
+                                rowsHtml += `
+                                    <div class="drawer-prop-row">
+                                        <span class="drawer-prop-key">${k.replace(/_/g, ' ')}</span>
+                                        <span class="drawer-prop-val">${v}</span>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                }
+
+                // 2. Extra flat properties
+                const excluded = ['title', 'subtitle', 'category', 'category_label', 'status', 'status_label', 'status_color', 'color', 'marker_color', 'lat', 'lng', 'thumbnail', 'thumbnail_url', 'image', 'attributes', 'actions', 'badges', 'extra'];
+                Object.keys(props).forEach(k => {
+                    if (!excluded.includes(k) && props[k] !== null && props[k] !== undefined && typeof props[k] !== 'object') {
+                        rowsHtml += `
+                            <div class="drawer-prop-row">
+                                <span class="drawer-prop-key">${k.replace(/_/g, ' ')}</span>
+                                <span class="drawer-prop-val">${props[k]}</span>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (rowsHtml) {
                     extraContainer.style.display = 'flex';
-                    extraContainer.innerHTML = extraKeys.map(k => `
-                        <div class="drawer-prop-row">
-                            <span class="drawer-prop-key">${k.replace(/_/g, ' ')}</span>
-                            <span class="drawer-prop-val">${props[k]}</span>
-                        </div>
-                    `).join('');
+                    extraContainer.innerHTML = rowsHtml;
                 } else {
                     extraContainer.style.display = 'none';
                     extraContainer.innerHTML = '';
+                }
+            }
+
+            // Custom Action Buttons
+            const actionsContainer = document.getElementById(`drawer-custom-actions-${this.id}`);
+            if (actionsContainer) {
+                let actions = props.actions;
+                if (typeof actions === 'string') {
+                    try { actions = JSON.parse(actions); } catch (e) { actions = []; }
+                }
+                if (Array.isArray(actions) && actions.length > 0) {
+                    actionsContainer.style.display = 'flex';
+                    actionsContainer.innerHTML = actions.map(act => {
+                        const href = act.payload || act.url || '#';
+                        const target = act.target ? `target="${act.target}"` : '';
+                        const btnClass = act.variant === 'secondary' ? 'btn-action-secondary' : 'btn-action-primary';
+                        return `
+                            <a href="${href}" ${target} class="drawer-action-btn ${btnClass}">
+                                ${act.icon ? `<span>${act.icon}</span>` : ''}
+                                <span>${act.label}</span>
+                            </a>
+                        `;
+                    }).join('');
+                } else {
+                    actionsContainer.style.display = 'none';
+                    actionsContainer.innerHTML = '';
                 }
             }
 
@@ -2118,6 +2236,25 @@
                     }
                 });
             }
+        }
+
+        setMarkers(newMarkers) {
+            this.config.markers = Array.isArray(newMarkers) ? newMarkers : [];
+            this.applyComplexFilter();
+            this.updateTelemetry(this.config.markers);
+            this.updateFilterCounts();
+        }
+
+        updateMarkersData(newMarkers) {
+            this.setMarkers(newMarkers);
+        }
+
+        focusEntity(id) {
+            this.openEntityDrawerById(id);
+        }
+
+        focusMarker(id) {
+            this.openEntityDrawerById(id);
         }
 
         destroy() {

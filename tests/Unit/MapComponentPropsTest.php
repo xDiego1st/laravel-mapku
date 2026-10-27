@@ -43,15 +43,23 @@ class MapComponentPropsTest extends TestCase
         $this->assertTrue($map->enableGps);
         $this->assertTrue($map->enableThemeSwitcher);
         $this->assertTrue($map->enableFullscreen);
+
+        // 6. Back URL
+        $mapWithBack = new Map(id: 'map-back', backUrl: '/admin/dashboard', backLabel: 'Kembali');
+        $this->assertEquals('/admin/dashboard', $mapWithBack->backUrl);
+        $this->assertEquals('Kembali', $mapWithBack->backLabel);
     }
 
     public function test_map_component_renders_blade_view_properly(): void
     {
-        $view = $this->blade('<x-mapping-map id="test-blade-render" />');
+        $view = $this->blade('<x-mapping-map id="test-blade-render" back-url="/admin/dashboard" back-label="Kembali ke Dashboard" />');
         
         // Assert container elements exist
         $view->assertSee('mapping-canvas-test-blade-render', false);
         $view->assertSee('mapping-top-command-bar', false);
+        $view->assertSee('mapping-back-btn-test-blade-render', false);
+        $view->assertSee('/admin/dashboard', false);
+        $view->assertSee('Kembali ke Dashboard', false);
         $view->assertSee('mapping-spatial-inspector', false);
         $view->assertSee('mapping-legend-panel', false);
         $view->assertSee('mapping-right-gis-controls', false);
