@@ -865,14 +865,24 @@
                 }
             });
 
+            const isTracking = this.isTruckTracking();
+
             if (!this.map.getSource('markers_source')) {
                 this.map.addSource('markers_source', {
                     type: 'geojson',
                     data: { type: 'FeatureCollection', features },
-                    cluster: this.config.cluster !== false,
+                    cluster: !isTracking && (this.config.cluster !== false),
                     clusterMaxZoom: 15,
                     clusterRadius: 50
                 });
+            }
+
+            if (isTracking) {
+                // Untuk mode fleet tracking armada, jangan buat vector cluster/point layers
+                this.setupTruckZoomScaling();
+                this.renderDomTruckMarkers();
+                this.renderEntityList();
+                return;
             }
 
             // 1. Cluster Outer Glow Aura
@@ -2317,6 +2327,9 @@
                     wrapper.style.setProperty('--truck-label-display', z < 11.2 ? 'none' : 'block');
                     wrapper.style.setProperty('--truck-label-opacity', z < 11.2 ? '0' : '1');
                 }
+                document.documentElement.style.setProperty('--truck-marker-scale', scale.toFixed(2));
+                document.documentElement.style.setProperty('--truck-label-display', z < 11.2 ? 'none' : 'block');
+                document.documentElement.style.setProperty('--truck-label-opacity', z < 11.2 ? '0' : '1');
             };
 
             this.map.on('zoom', updateScale);
