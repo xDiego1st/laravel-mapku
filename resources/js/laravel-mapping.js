@@ -1117,6 +1117,7 @@
                         this.map.setLayoutProperty(l, 'visibility', 'none');
                     }
                 });
+                this.setupTruckZoomScaling();
                 this.renderDomTruckMarkers();
             }
             this.renderEntityList();
@@ -2284,6 +2285,44 @@
                 (this.config.markers && this.config.markers.some(m => m.marker_type === 'truck' || ['DALAM_PERJALANAN', 'SAMPAI_LOKASI', 'PROSES_PENGERJAAN', 'DITUGASKAN', 'SIAGA'].includes(m.category)));
         }
 
+        setupTruckZoomScaling() {
+            if (!this.map || this._truckZoomScalingSetup) return;
+            this._truckZoomScalingSetup = true;
+
+            const updateScale = () => {
+                if (!this.map) return;
+                const z = this.map.getZoom();
+
+                // Rumus kalkulasi skala dinamis:
+                // Saat zoom out (z rendah), icon semakin mengecil secara smooth
+                // z <= 9.0: 0.45 (diameter ~22px)
+                // z = 10.0: 0.55 (diameter ~26px)
+                // z = 11.0: 0.68 (diameter ~33px)
+                // z = 12.0: 0.82 (diameter ~39px)
+                // z = 13.0: 0.95 (diameter ~45px)
+                // z = 14.0: 1.05 (diameter ~50px)
+                // z >= 15.0: 1.18 (diameter ~56px)
+                let scale = 1.0;
+                if (z <= 9.0) scale = 0.45;
+                else if (z <= 10.0) scale = 0.55;
+                else if (z <= 11.0) scale = 0.68;
+                else if (z <= 12.0) scale = 0.82;
+                else if (z <= 13.0) scale = 0.95;
+                else if (z <= 14.0) scale = 1.05;
+                else scale = 1.18;
+
+                const wrapper = document.getElementById(`mapping-wrapper-${this.id}`);
+                if (wrapper) {
+                    wrapper.style.setProperty('--truck-marker-scale', scale.toFixed(2));
+                    wrapper.style.setProperty('--truck-label-display', z < 11.2 ? 'none' : 'block');
+                    wrapper.style.setProperty('--truck-label-opacity', z < 11.2 ? '0' : '1');
+                }
+            };
+
+            this.map.on('zoom', updateScale);
+            updateScale();
+        }
+
         renderDomTruckMarkers(customList) {
             if (!this.map || !window.maplibregl) return;
             this.domTruckMarkers = this.domTruckMarkers || {};
@@ -2325,10 +2364,13 @@
                 wrap.style.left = '0';
                 wrap.style.willChange = 'transform';
 
+                const scaler = document.createElement('div');
+                scaler.className = 'truck-marker-scaler';
+
                 const beacon = document.createElement('div');
                 beacon.className = `truck-marker-beacon ${colorClass}`;
                 if (m.extra && m.extra.color) beacon.style.backgroundColor = m.extra.color;
-                wrap.appendChild(beacon);
+                scaler.appendChild(beacon);
 
                 const pin = document.createElement('div');
                 pin.className = 'truck-marker-pin';
@@ -2338,13 +2380,15 @@
                         <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-2 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
                     </svg>
                 `;
-                wrap.appendChild(pin);
+                scaler.appendChild(pin);
 
                 const label = document.createElement('div');
                 label.className = 'truck-marker-label';
                 label.id = `truck-label-${id}`;
                 label.innerText = armadaCode;
-                wrap.appendChild(label);
+                scaler.appendChild(label);
+
+                wrap.appendChild(scaler);
 
                 wrap.addEventListener('click', (e) => {
                     e.stopPropagation();
